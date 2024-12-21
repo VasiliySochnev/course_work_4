@@ -1,12 +1,11 @@
 from django.db import models
-
 from auth_users.models import User
 
 
 class ReceiveMail(models.Model):
     """Модель «Получатель рассылки»:"""
 
-    mail = models.EmailField(max_length=255, verbose_name="Письмо", unique=True)
+    mail = models.EmailField(max_length=255, verbose_name="email", unique=True)
     fio = models.CharField(max_length=255, verbose_name="ФИО")
     comment = models.TextField(verbose_name="Комментарии", null=True, blank=True)
     is_active = models.BooleanField(default=True, verbose_name="активность")
