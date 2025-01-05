@@ -11,8 +11,7 @@ class ReceiveMail(models.Model):
     is_active = models.BooleanField(default=True, verbose_name="активность")
     owner = models.ForeignKey(
         User,
-        verbose_name="Получатель",
-        help_text="укажите получателя рассылки",
+        verbose_name="Владелец",
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
@@ -65,7 +64,7 @@ class Mailing(models.Model):
     ]
 
     first_sending = models.DateTimeField(verbose_name="Дата первой отправки", null=True, blank=True)
-    end_sending = models.DateTimeField(verbose_name="Дата окончания отправки",null=True, blank=True)
+    end_sending = models.DateTimeField(verbose_name="Дата окончания отправки", null=True, blank=True)
 
     status = models.CharField(max_length=11, choices=STATUS_CHOICES, default=CREATED, verbose_name="Статус рассылки")
     is_active = models.BooleanField(default=True, verbose_name="активна", null=True, blank=True)
@@ -88,9 +87,17 @@ class Mailing(models.Model):
 class AttemptMailing(models.Model):
     """Модель «Попытка рассылки»"""
 
+    STATUS_OK = "Успешно"
+    STATUS_NOK = "Не успешно"
+
+    STATUS_CHOICES = [
+        (STATUS_OK, "Успешно"),
+        (STATUS_NOK, "Не успешно"),
+    ]
+
     date_attempt = models.DateTimeField(verbose_name="Дата и время попытки")
-    status = models.CharField(max_length=115, verbose_name="Статус попытки")
-    response = models.TextField(verbose_name="Комментарии", null=True, blank=True)
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, verbose_name="Статус попытки")
+    response = models.TextField(verbose_name="Ответ почтового сервера", null=True, blank=True)
     mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name="Рассылка", related_name="mailing")
     owner = models.ForeignKey(User, on_delete=models.SET_NULL,  null=True, blank=True, verbose_name="Владелец")
     def __str__(self):

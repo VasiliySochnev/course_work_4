@@ -7,7 +7,7 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True, verbose_name="Email")
     phone = models.CharField(
-        max_length=35, verbose_name="телофон", blank=True, null=True, help_text="введи номер телефона"
+        max_length=35, verbose_name="телефон", blank=True, null=True, help_text="введи номер телефона"
     )
     first_name = models.CharField(max_length=50, verbose_name="Имя")
     last_name = models.CharField(max_length=50, verbose_name="Фамилия")

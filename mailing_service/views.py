@@ -1,9 +1,8 @@
-# flake8: noqa
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, request
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -11,7 +10,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from mailing_service.models import AttemptMailing, Mailing, Message, ReceiveMail
 
 from .forms import MailingForm, MailingModeratorForm, MessageForm, ReceiveMailForm, ReceiveMailModeratorForm
-from .services import get_attempt_from_cache, get_mailing_from_cache
+from .services import get_attempt_from_cache, get_mailing_from_cache, run_mail
 
 
 def base(request):
@@ -67,6 +66,7 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         recipient = form.save()
         recipient.owner = self.request.user
         recipient.save()
+
         return super().form_valid(form)
 
 
@@ -83,7 +83,7 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     model = Mailing
     form_class = MailingForm
     template_name = "mailing_service/mailing/mailing_form.html"
-    success_url = reverse_lazy("mailing_service/mailing:mailing_list")
+    success_url = reverse_lazy("mailing:mailing_list")
 
     def get_form_class(self):
         user = self.request.user
@@ -133,7 +133,7 @@ class ReceiveMailCreateView(LoginRequiredMixin, CreateView):
 class ReceiveMailUpdateView(LoginRequiredMixin, UpdateView):
     model = ReceiveMail
     form_class = ReceiveMailForm
-
+    template_name = "mailing_service/mailing/receivemail_form.html"
     success_url = reverse_lazy("mailing:receivemail_list")
 
     def get_form_class(self):
@@ -165,7 +165,7 @@ class MessageListView(ListView):
 class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
     form_class = MessageForm
-
+    template_name = "mailing_service/mailing/message_detail.html"
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
         if not self.request.user.is_superuser:
@@ -177,7 +177,7 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
     model = Message
     form_class = MessageForm
     template_name = 'mailing_service/mailing/message_form.html'
-    success_url = reverse_lazy("mailing:message_list")
+    success_url = reverse_lazy("mailing:message")
 
     def form_valid(self, form):
         recipient = form.save()
@@ -189,7 +189,8 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
 class MessageUpdateView(LoginRequiredMixin, UpdateView):
     model = Message
     form_class = MessageForm
-    success_url = reverse_lazy("mailing:message_list")
+    success_url = reverse_lazy("mailing:message")
+    template_name = 'mailing_service/mailing/message_form.html'
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
@@ -200,7 +201,8 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
 
 class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
-    success_url = reverse_lazy("mailing:message_list")
+    success_url = reverse_lazy("mailing:message")
+    template_name = 'mailing_service/mailing/message_delete.html'
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
@@ -229,3 +231,4 @@ class MailingAttemptListView(LoginRequiredMixin, ListView):
         elif self.request.user.groups.filter(name="Пользователи").exists():
             return super().get_queryset().filter(owner=self.request.user)
         raise PermissionDenied
+
