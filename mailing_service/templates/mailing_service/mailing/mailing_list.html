@@ -7,7 +7,7 @@
             <div class="col-4"></div>
             <div class="col-4">
                 <h2>Рассылки</h2>
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and not user.is_staff %}
                     <a class="btn btn-success mt-3" href="{% url 'mailing:mailing_create' %}">Создать рассылку &raquo;</a></p>
                 {% endif %}
             </div>
@@ -21,35 +21,33 @@
                 <thead>
                 <tr>
                     <th>Сообщение</th>
-                    <th>Время начала</th>
-                    <th>Время окончания</th>
+                    <th>Дата начала</th>
+                    <th>Дата окончания</th>
                     <th>Тема сообщения</th>
                     <th>Статус</th>
                     <th>Активность</th>
-                    {% if user.is_superuser %}
                     <th>Создал</th>
-                    {% endif %}
                     <th>Действия</th>
                 </tr>
                 </thead>
-
                 {% for object in object_list %}
                 <tr>
+                    {% if user.is_superuser or object.owner == user or user.is_staff %}
                     <td>{{ object.message|truncatechars:30 }}</td>
                     <td>{{ object.first_sending|date:"d M Y" }}</td>
                     <td>{{ object.end_sending|date:"d M Y" }}</td>
                     <td>{{ object.message.subject }}</td>
                     <td>{{ object.status }}</td>
                     <td>
-                        {% if user.is_superuser %}
-                        {% if object.is_active %}
+                        {% if user.is_superuser or user.is_staff %}
+                            {% if object.is_active %}
                                 <a type="button" class="btn btn-danger btn-sm"
                                    href="{% url 'mailing:block_mailing' object.pk %}">Заблокировать</a>
                             {% else %}
                                 <a type="button" class="btn btn-success btn-sm"
                                    href="{% url 'mailing:block_mailing' object.pk %}">Разблокировать</a>
                             {% endif %}
-                        {% else %}
+
                         {{object.is_active|yesno:"Активна, Не активна"}}
                         {% endif %}
                     </td>
@@ -58,17 +56,17 @@
                     {% endif %}
                     <td>
                         <a class="btn btn-primary btn-sm" href="{% url 'mailing:mailing_detail' object.pk%}">Посмотреть </a>
-                        {% if user.is_authenticated %}
+                        {% if object.owner == user %}
                         <a class="btn btn-primary btn-sm" href="{% url 'mailing:mailing_update' object.pk%}">Редактировать</a>
                         <a class="btn btn-danger btn-sm" href="{% url 'mailing:mailing_delete' object.pk%}">Удалить</a>
-                        {% endif %}
-                        {% if user.is_superuser %}
                         <a class="btn btn-secondary btn-sm" href="{% url 'mailing:run_mail' object.pk%}">Запустить &raquo;</a>
                         {% endif %}
+                    {% endif %}
                     </td>
+                {% endfor%}
 
                 </tr>
-                {% endfor%}
+
             </table>
 
         </div><!-- /.row -->

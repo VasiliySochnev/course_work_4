@@ -47,11 +47,11 @@
                                 </li>
                                  {% if user.is_authenticated %}
                                 <li><a class="dropdown-item" href="{% url 'users:user_detail' user.pk%}">Профиль</a></li>
-
+                                {% if user.is_superuser or user.is_staff %}
                                 <li>
                                     <a class="dropdown-item" href="{% url 'users:user_list' %}">Список пользователей</a>
                                 </li>
-
+                                {% endif %}
                                 {% endif %}
                                 {% else %}
                                 <li>

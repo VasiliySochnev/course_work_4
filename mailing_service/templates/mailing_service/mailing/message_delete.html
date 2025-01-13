@@ -6,13 +6,12 @@
         <div class="col-6">
             <form class="row" method="post" enctype="multipart/form-data">
                 <div class="card">
-                    <h2>Вы прям серьёзно хотите удалить рассылку от: </h2>
-                    <p class="card-text">Категория: {{ object.first_sending }}</p>
+                    <h2>Вы действительно хотите удалить это сообщение: </h2>
                     <div class="form-body">
                         {% csrf_token %}
                     </div>
                     <button type="submit" class="btn btn-danger">Удалить</button>
-                    <a class="btn btn-primary mt-1" href="{% url 'mailing:mailing_list' %}" role="button">Отмена</a>
+                    <a class="btn btn-primary mt-1" href="{% url 'mailing:message' %}" role="button">Отмена</a>
                 </div>
             </form>
         </div>

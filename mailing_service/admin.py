@@ -1,7 +1,5 @@
 from django.contrib import admin
-from django.contrib import admin
 from mailing_service.models import Mailing, AttemptMailing, Message, ReceiveMail
-from auth_users.models import User
 
 
 @admin.register(ReceiveMail)

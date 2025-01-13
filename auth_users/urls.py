@@ -5,6 +5,7 @@ from django.views.decorators.cache import cache_page
 from django.conf import settings
 from django.conf.urls.static import static
 from auth_users.apps import AuthUsersConfig
+from auth_users.services import block_user
 from auth_users.views import (
     UserCreateView,
     UserDeleteView,
@@ -27,4 +28,5 @@ urlpatterns = [
     path("update/<int:pk>/", UserUpdateView.as_view(), name="user_update"),
     path("delete/<int:pk>/", UserDeleteView.as_view(), name="user_delete"),
     path("password-recovery/", PasswordRecoveryView.as_view(), name="password_recovery"),
+    path("block_user/<int:pk>", block_user, name="block_user"),
 ]

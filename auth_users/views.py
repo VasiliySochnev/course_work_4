@@ -63,9 +63,22 @@ class UserDetailView(DetailView):
     form_class = UserUpdateForm
 
 
-class UserUpdateView(UpdateView):
+
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
+
+    def get_success_url(self):
+        if self.request.user.is_superuser:
+            return reverse_lazy("users:users")
+        else:
+            return reverse_lazy("mailing:home")
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
 
 
 class UserDeleteView(DeleteView):

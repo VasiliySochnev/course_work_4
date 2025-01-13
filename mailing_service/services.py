@@ -80,18 +80,18 @@ def run_mail(request, pk):
 #     return redirect("mailing:mailing_list")
 
 
-# def get_message_from_cache():
-#     """Получение данных по сообщениям из кэша, если кэш пуст берем из БД."""
-#
-#     if not CACHE_ENABLED:
-#         return Message.objects.all()
-#     key = "message_list"
-#     cache_message = cache.get(key)
-#     if cache_message is not None:
-#         return cache_message
-#     cache_message = Message.objects.all()
-#     cache.set(cache_message, key)
-#     return cache_message
+def get_message_from_cache():
+    """Получение данных по сообщениям из кэша, если кэш пуст берем из БД."""
+
+    if not CACHE_ENABLED:
+        return Message.objects.all()
+    key = "message_list"
+    cache_message = cache.get(key)
+    if cache_message is not None:
+        return cache_message
+    cache_message = Message.objects.all()
+    cache.set(cache_message, key)
+    return cache_message
 
 
 def get_mailing_from_cache():

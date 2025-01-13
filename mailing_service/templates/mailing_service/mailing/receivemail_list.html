@@ -9,7 +9,7 @@
             </div>
             <div class="col-4">
                 <h2>Получатели</h2>
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and not user.is_staff %}
                 <a class="btn btn-success mt-3" href="{% url 'mailing:receivemail_form' %}">Добавить получателя&raquo;</a>
                 {% endif %}
             </div>
@@ -28,29 +28,22 @@
                     <th>ФИО получателя</th>
                     <th>email получателя</th>
                     <th>Комментарий</th>
-                    {% if request.user.is_superuser %}
                     <th>Создал</th>
-                    {% endif %}
-                    <th>        </th>
                     <th>Действия</th>
                 </tr>
                 </thead>
 
                 {% for object in object_list %}
                 <tr>
-                    <td>
-                        <img src="{{ object.avatar|media_filter }}" alt="Фото" class="rounded" width="40" height="40">
-
-                    </td>
+                    {% if user.is_staff or object.owner == user %}
+                    <td><img src="{{ object.avatar|media_filter }}" alt="Фото" class="rounded" width="40" height="40"></td>
                     <td>{{ object.fio }}</td>
                     <td>{{ object.mail }}</td>
                     <td>{{ object.comment | truncatechars:30 }}</td>
-                    {% if user.is_authenticated %}
                     <td>{{ object.owner }}</td>
                     {% endif %}
                     <td>
-
-                        {% if object.owner %}
+                        {% if object.owner == user %}
                         <a class="btn btn-primary btn-sm"
                            href="{% url 'mailing:receivemail_update' object.pk%}">Редактировать
                         </a>

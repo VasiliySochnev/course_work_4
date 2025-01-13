@@ -48,12 +48,16 @@ class Messages(TemplateView):
     template_name = "mailing_service/mailing/message_list.html"
 
 
-class MailingListView(ListView):
+class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
     template_name = "mailing_service/mailing/mailing_list.html"
 
-    def get_queryset(self):
-        return get_mailing_from_cache()
+    def get_queryset(self, *args, **kwargs ):
+        if self.request.user.is_superuser or self.request.user.groups.filter(name="Менеджеры").exists():
+            return super().get_queryset()
+        elif self.request.user.groups.filter(name="Пользователи").exists():
+            return super().get_queryset().filter(owner=self.request.user)
+        raise PermissionDenied
 
 
 class MailingCreateView(LoginRequiredMixin, CreateView):
@@ -66,8 +70,9 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         recipient = form.save()
         recipient.owner = self.request.user
         recipient.save()
-
         return super().form_valid(form)
+
+
 
 
 class MailingDetailView(LoginRequiredMixin, DetailView):
@@ -75,8 +80,13 @@ class MailingDetailView(LoginRequiredMixin, DetailView):
     form_class = MailingForm
     template_name = "mailing_service/mailing/mailing_detail.html"
 
-    def get_queryset(self):
-        return get_mailing_from_cache()
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user.groups.filter(name="Менеджеры") or self.request.user.is_superuser:
+            return self.object
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
 
 
 class MailingUpdateView(LoginRequiredMixin, UpdateView):
@@ -168,7 +178,7 @@ class MessageDetailView(LoginRequiredMixin, DetailView):
     template_name = "mailing_service/mailing/message_detail.html"
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
-        if not self.request.user.is_superuser:
+        if not self.request.user == self.object.owner:
             raise PermissionDenied
         return self.object
 
@@ -194,7 +204,7 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
-        if not self.request.user.is_superuser:
+        if not self.request.user == self.object.owner:
             raise PermissionDenied
         return self.object
 
@@ -206,7 +216,7 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
-        if not self.request.user.is_superuser:
+        if not self.request.user == self.object.owner:
             raise PermissionDenied
         return self.object
 

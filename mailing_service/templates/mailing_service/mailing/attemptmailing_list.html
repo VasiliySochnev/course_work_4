@@ -21,25 +21,23 @@
                     <th>Дата</th>
                     <th>Статус</th>
                     <th>Ответ сервера</th>
-                    {% if user.is_authenticated %}
                     <th>Создал</th>
-                    {% endif %}
                 </tr>
                 </thead>
-
                 {% for object in object_list %}
-                <tr>
-                    <td>{{ object.mailing.message.subject }}</td>
-                    <td>{{ object.mailing.message.content|truncatechars:30 }}</td>
-                    <td>{{ object.date_attempt}}</td>
-                    <td>{{ object.status}}</td>
-                    <td>{{ object.response}}</td>
-                    {% if user.is_authenticated %}
-                    <td>{{ object.mailing.owner }}</td>
-                    {% endif %}
+                    {% if object.owner == user or user.is_staff %}
 
-                </tr>
-                {% endfor%}
+                    <tr>
+                        <td>{{ object.mailing.message.subject }}</td>
+                        <td>{{ object.mailing.message.content|truncatechars:30 }}</td>
+                        <td>{{ object.date_attempt}}</td>
+                        <td>{{ object.status}}</td>
+                        <td>{{ object.response}}</td>
+                        <td>{{ object.mailing.owner }}</td>
+                    </tr>
+
+                    {% endif %}
+                {% endfor %}
             </table>
 
         </div><!-- /.row -->
