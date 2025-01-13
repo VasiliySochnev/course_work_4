@@ -1,4 +1,5 @@
 from django.db import models
+
 from auth_users.models import User
 
 

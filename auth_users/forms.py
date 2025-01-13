@@ -1,13 +1,11 @@
-from django.contrib.auth.forms import (
-    PasswordResetForm,
-    SetPasswordForm,
-    UserCreationForm,
-)
+from django import forms
+from django.contrib.auth.forms import (PasswordResetForm, SetPasswordForm,
+                                       UserCreationForm)
 from django.forms import ModelForm
 from django.urls import reverse_lazy
-from django import forms
-from mailing_service.forms import StyleFormMixin
+
 from auth_users.models import User
+from mailing_service.forms import StyleFormMixin
 
 
 class UserRegisterForm(StyleFormMixin, UserCreationForm):

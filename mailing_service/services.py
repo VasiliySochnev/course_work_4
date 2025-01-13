@@ -1,13 +1,12 @@
-from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.core.mail import send_mail
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.utils import timezone
+
 from config.settings import CACHE_ENABLED, EMAIL_HOST_USER
 from mailing_service.models import AttemptMailing, Mailing, Message
-from .forms import EmailForm
 
 
 def run_mail(request, pk):

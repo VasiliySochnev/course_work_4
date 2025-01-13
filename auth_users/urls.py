@@ -1,18 +1,12 @@
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView
 from django.urls import path
+
 from auth_users.apps import AuthUsersConfig
 from auth_users.services import block_user
-from auth_users.views import (
-    UserCreateView,
-    UserDeleteView,
-    UserDetailView,
-    UserListView,
-    UserUpdateView,
-    email_verification,
-    PasswordRecoveryView,
-    user_logout,
-)
+from auth_users.views import (PasswordRecoveryView, UserCreateView,
+                              UserDeleteView, UserDetailView, UserListView,
+                              UserUpdateView, email_verification, user_logout)
 
 app_name = AuthUsersConfig.name
 
