@@ -1,26 +1,41 @@
 import secrets
-
 from django.contrib.auth import logout
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.views import LoginView, PasswordResetConfirmView, PasswordResetView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import (
+    PasswordResetConfirmView,
+    PasswordResetView,
+)
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
-from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, TemplateView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    FormView,
+    ListView,
+    UpdateView,
+)
 
 from config.settings import EMAIL_HOST_USER
-from auth_users.forms import UserForgotPasswordForm, UserRegisterForm, UserSetNewPasswordForm, UserUpdateForm, \
-    PasswordRecoveryForm
+from auth_users.forms import (
+    UserForgotPasswordForm,
+    UserRegisterForm,
+    UserSetNewPasswordForm,
+    UserUpdateForm,
+    PasswordRecoveryForm,
+)
 from auth_users.models import User
 
 
 def user_logout(request):
     logout(request)
-    return render(request, template_name='mailing_service/mailing/home.html')
+    return render(request, template_name="mailing_service/mailing/home.html")
+
 
 class UserCreateView(CreateView):
     model = User
@@ -63,7 +78,6 @@ class UserDetailView(DetailView):
     form_class = UserUpdateForm
 
 
-
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
@@ -99,14 +113,16 @@ class UserPasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmView
         context["title"] = "Установить новый пароль"
         return context
 
-# flake8: noqa
+
 class UserForgotPasswordView(SuccessMessageMixin, PasswordResetView):
     """Представление по сбросу пароля по почте"""
 
     form_class = UserForgotPasswordForm
     template_name = "auth_users/password_reset.html"
     success_url = reverse_lazy("users:login")
-    success_message = "Письмо с инструкцией по восстановлению пароля отправлено на ваш email"
+    success_message = (
+        "Письмо с инструкцией по восстановлению пароля отправлено на ваш email"
+    )
     subject_template_name = "users/email/password_subject_reset_mail.txt"
     email_template_name = "users/email/password_reset_mail.html"
 

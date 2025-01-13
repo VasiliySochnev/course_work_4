@@ -9,13 +9,19 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from mailing_service.models import AttemptMailing, Mailing, Message, ReceiveMail
 
-from .forms import MailingForm, MailingModeratorForm, MessageForm, ReceiveMailForm, ReceiveMailModeratorForm
-from .services import get_attempt_from_cache, get_mailing_from_cache, run_mail
+from .forms import (
+    MailingForm,
+    MailingModeratorForm,
+    MessageForm,
+    ReceiveMailForm,
+    ReceiveMailModeratorForm,
+)
 
 
 def base(request):
 
     return render(request, "base.html")
+
 
 class homeView(TemplateView):
     template_name = "mailing_service/mailing/home.html"
@@ -37,8 +43,8 @@ class Contacts(TemplateView):
 
     def contacts(request):
         if request.method == "POST":
-            name = request.POST.get("name")  # получаем имя
-            message = request.POST.get("message")  # получаем сообщение
+            name = request.POST.get("name")
+            message = request.POST.get("message")
             return HttpResponse(f"Спасибо, {name}! {message} Сообщение получено.")
         return render(request, "mailing_service/mailing/contacts.html")
 
@@ -52,8 +58,11 @@ class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
     template_name = "mailing_service/mailing/mailing_list.html"
 
-    def get_queryset(self, *args, **kwargs ):
-        if self.request.user.is_superuser or self.request.user.groups.filter(name="Менеджеры").exists():
+    def get_queryset(self, *args, **kwargs):
+        if (
+            self.request.user.is_superuser
+            or self.request.user.groups.filter(name="Менеджеры").exists()
+        ):
             return super().get_queryset()
         elif self.request.user.groups.filter(name="Пользователи").exists():
             return super().get_queryset().filter(owner=self.request.user)
@@ -63,7 +72,7 @@ class MailingListView(LoginRequiredMixin, ListView):
 class MailingCreateView(LoginRequiredMixin, CreateView):
     model = Mailing
     form_class = MailingForm
-    template_name = 'mailing_service/mailing/mailing_form.html'
+    template_name = "mailing_service/mailing/mailing_form.html"
     success_url = reverse_lazy("mailing_service:mailing_list")
 
     def form_valid(self, form):
@@ -73,8 +82,6 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-
-
 class MailingDetailView(LoginRequiredMixin, DetailView):
     model = Mailing
     form_class = MailingForm
@@ -82,9 +89,15 @@ class MailingDetailView(LoginRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
-        if self.request.user.groups.filter(name="Менеджеры") or self.request.user.is_superuser:
+        if (
+            self.request.user.groups.filter(name="Менеджеры")
+            or self.request.user.is_superuser
+        ):
             return self.object
-        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+        if (
+            self.object.owner != self.request.user
+            and not self.request.user.is_superuser
+        ):
             raise PermissionDenied
         return self.object
 
@@ -112,15 +125,20 @@ class ReceiveMailListView(ListView):
     model = ReceiveMail
     template_name = "mailing_service/mailing/receivemail_list.html"
 
+
 class ReceiveMailDetailView(LoginRequiredMixin, DetailView):
     model = ReceiveMail
     form_class = ReceiveMailModeratorForm
     template_name = "mailing_service/mailing/mailing_detail.html"
+
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
         if self.request.user.is_superuser:
             return self.object
-        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+        if (
+            self.object.owner != self.request.user
+            and not self.request.user.is_superuser
+        ):
             raise PermissionDenied
         return self.object
 
@@ -162,20 +180,19 @@ class ReceiveMailingDeleteView(LoginRequiredMixin, DeleteView):
 class MessageListView(ListView):
     model = Message
     form_class = MessageForm
-    template_name = 'mailing_service/mailing/message_list.html'
+    template_name = "mailing_service/mailing/message_list.html"
 
     def get_queryset(self, *args, **kwargs):
 
         queryset = super().get_queryset()
-        print(queryset)  # Для отладки
         return queryset
-
 
 
 class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
     form_class = MessageForm
     template_name = "mailing_service/mailing/message_detail.html"
+
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
         if not self.request.user == self.object.owner:
@@ -186,7 +203,7 @@ class MessageDetailView(LoginRequiredMixin, DetailView):
 class MessageCreateView(LoginRequiredMixin, CreateView):
     model = Message
     form_class = MessageForm
-    template_name = 'mailing_service/mailing/message_form.html'
+    template_name = "mailing_service/mailing/message_form.html"
     success_url = reverse_lazy("mailing:message")
 
     def form_valid(self, form):
@@ -200,7 +217,7 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
     model = Message
     form_class = MessageForm
     success_url = reverse_lazy("mailing:message")
-    template_name = 'mailing_service/mailing/message_form.html'
+    template_name = "mailing_service/mailing/message_form.html"
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
@@ -212,7 +229,7 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
 class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     success_url = reverse_lazy("mailing:message")
-    template_name = 'mailing_service/mailing/message_delete.html'
+    template_name = "mailing_service/mailing/message_delete.html"
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
@@ -241,4 +258,3 @@ class MailingAttemptListView(LoginRequiredMixin, ListView):
         elif self.request.user.groups.filter(name="Пользователи").exists():
             return super().get_queryset().filter(owner=self.request.user)
         raise PermissionDenied
-

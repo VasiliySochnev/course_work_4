@@ -1,8 +1,6 @@
 {% extends 'mailing_service/mailing/base.html' %}
 {% load my_tags %}
 {% block content %}
-
-
 <div class="row">
     <div class="col-12">
         <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center mt-5">
@@ -28,7 +26,7 @@
                 <a href="{% url 'mailing:mailing_list' %}">Количество активных рассылок: </a>
                 <span class="badge bg-dark rounded-pill">
                 <p>{{ active_mailings_count|default:"Нет данных" }}</p>
-</span>
+                </span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <a href="{% url 'mailing:receivemail_list' %}">Количество уникальных получателей: </a>

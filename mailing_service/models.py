@@ -34,9 +34,9 @@ class Message(models.Model):
 
     subject = models.CharField(max_length=255, verbose_name="Тема письма")
     content = models.TextField(verbose_name="Содержимое письма")
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Владелец")
-
-
+    owner = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Владелец"
+    )
 
     def __str__(self):
         return self.content
@@ -46,7 +46,7 @@ class Message(models.Model):
         verbose_name_plural = "письма"
         ordering = ["subject"]
         permissions = [
-            ('can_blocking_sms', 'Может блокировать сообщение'),
+            ("can_blocking_sms", "Может блокировать сообщение"),
         ]
 
 
@@ -63,14 +63,37 @@ class Mailing(models.Model):
         (FINISHED, "Завершена"),
     ]
 
-    first_sending = models.DateTimeField(verbose_name="Дата первой отправки", null=True, blank=True)
-    end_sending = models.DateTimeField(verbose_name="Дата окончания отправки", null=True, blank=True)
+    first_sending = models.DateTimeField(
+        verbose_name="Дата первой отправки", null=True, blank=True
+    )
+    end_sending = models.DateTimeField(
+        verbose_name="Дата окончания отправки", null=True, blank=True
+    )
 
-    status = models.CharField(max_length=11, choices=STATUS_CHOICES, default=CREATED, verbose_name="Статус рассылки")
-    is_active = models.BooleanField(default=True, verbose_name="активна", null=True, blank=True)
-    message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name="Сообщение", related_name="mailings", null=True, blank=True)
-    client = models.ManyToManyField(ReceiveMail, verbose_name="Клиент",)
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Владелец")
+    status = models.CharField(
+        max_length=11,
+        choices=STATUS_CHOICES,
+        default=CREATED,
+        verbose_name="Статус рассылки",
+    )
+    is_active = models.BooleanField(
+        default=True, verbose_name="активна", null=True, blank=True
+    )
+    message = models.ForeignKey(
+        Message,
+        on_delete=models.CASCADE,
+        verbose_name="Сообщение",
+        related_name="mailings",
+        null=True,
+        blank=True,
+    )
+    client = models.ManyToManyField(
+        ReceiveMail,
+        verbose_name="Клиент",
+    )
+    owner = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Владелец"
+    )
 
     def __str__(self):
         return f"{self.id}"
@@ -96,10 +119,22 @@ class AttemptMailing(models.Model):
     ]
 
     date_attempt = models.DateTimeField(verbose_name="Дата и время попытки")
-    status = models.CharField(max_length=15, choices=STATUS_CHOICES, verbose_name="Статус попытки")
-    response = models.TextField(verbose_name="Ответ почтового сервера", null=True, blank=True)
-    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name="Рассылка", related_name="mailing")
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL,  null=True, blank=True, verbose_name="Владелец")
+    status = models.CharField(
+        max_length=15, choices=STATUS_CHOICES, verbose_name="Статус попытки"
+    )
+    response = models.TextField(
+        verbose_name="Ответ почтового сервера", null=True, blank=True
+    )
+    mailing = models.ForeignKey(
+        Mailing,
+        on_delete=models.CASCADE,
+        verbose_name="Рассылка",
+        related_name="mailing",
+    )
+    owner = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Владелец"
+    )
+
     def __str__(self):
         return f'{self.date_attempt} "{self.status}" '
 

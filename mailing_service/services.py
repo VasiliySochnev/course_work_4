@@ -5,11 +5,10 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-
 from config.settings import CACHE_ENABLED, EMAIL_HOST_USER
 from mailing_service.models import AttemptMailing, Mailing, Message
-
 from .forms import EmailForm
+
 
 def run_mail(request, pk):
     """Функция запуска рассылки по требованию"""
@@ -43,41 +42,6 @@ def run_mail(request, pk):
         mailing.status = Mailing.FINISHED
     mailing.save()
     return redirect("mailing:mailing_list")
-
-# def run_mail(request, pk):
-#     """Функция запуска рассылки по требованию"""
-#     mailings = Mailing.objects.filter(status__in=Mailing.LAUNCHED)
-#
-#     for mailing in mailings:
-#
-#         for recipient in mailing.client.all():
-#             try:
-#                 mailing.status = Mailing.LAUNCHED
-#                 send_mail(
-#                     subject=mailing.message.subject,
-#                     message=mailing.message.content,
-#                     from_email=EMAIL_HOST_USER,
-#                     recipient_list=[recipient.mail],
-#                     fail_silently=False,
-#                 )
-#                 AttemptMailing.objects.create(
-#                     date_attempt=timezone.now(),
-#                     status=AttemptMailing.STATUS_OK,
-#                     server_response="Email отправлен",
-#                     mailing=mailing,
-#                 )
-#             except Exception as e:
-#                 print(f"Ошибка при отправке письма для {recipient.email}: {str(e)}")
-#                 AttemptMailing.objects.create(
-#                     date_attempt=timezone.now(),
-#                     status=AttemptMailing.STATUS_NOK,
-#                     server_response=str(e),
-#                     mailing=mailing,
-#                 )
-#         if mailing.end_sending and mailing.end_sending <= timezone.now():
-#             mailing.status = Mailing.COMPLETED
-#         mailing.save()
-#     return redirect("mailing:mailing_list")
 
 
 def get_message_from_cache():

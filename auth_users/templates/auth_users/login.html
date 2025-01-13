@@ -1,7 +1,6 @@
 {% extends 'mailing_service/mailing/base.html' %}
 {% block content %}
 {% load static %}
-
 <div class="container mt-5">
     <div class="row">
         <div class="col-6">
@@ -20,12 +19,9 @@
                     <div class="card-footer">
                         <a href="{% url 'users:password_recovery' %}">Забыли пароль?</a>
                     </div>
-
                 </div>
-
             </form>
         </div>
     </div>
-
 </div>
 {% endblock %}

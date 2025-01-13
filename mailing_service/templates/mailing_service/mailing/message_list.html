@@ -1,11 +1,9 @@
 {% extends 'mailing_service/mailing/base.html' %}
-
 {% block content %}
 <div class="container marketing mt-5">
     <div class="container text-center mt-3">
         <div class="row justify-content-center">
             <div class="col-4">
-
             </div>
             <div class="col-4">
                 <h2>Сообщения</h2>
@@ -14,10 +12,8 @@
                 {% endif %}
             </div>
             <div class="col-4">
-
             </div>
         </div>
-
     </div>
     <div class="row">
         <div class="table-responsive small">
@@ -30,7 +26,6 @@
                     <th>Действия</th>
                 </tr>
                 </thead>
-
                 {% for object in object_list %}
                 <tr>
                     {% if object.owner == user or user.is_staff %}
@@ -45,14 +40,10 @@
                         <a class="btn btn-danger btn-sm" href="{% url 'mailing:message_delete' object.pk%}">Удалить</a>
                         {% endif %}
                     </td>
-
                 </tr>
                 {% endfor%}
             </table>
-
-        </div><!-- /.row -->
-
-
-    </div><!-- /.row -->
-</div><!-- /.container -->
+        </div>
+    </div>
+</div>
 {% endblock %}

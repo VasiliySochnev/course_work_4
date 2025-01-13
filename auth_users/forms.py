@@ -1,4 +1,8 @@
-from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm, UserCreationForm
+from django.contrib.auth.forms import (
+    PasswordResetForm,
+    SetPasswordForm,
+    UserCreationForm,
+)
 from django.forms import ModelForm
 from django.urls import reverse_lazy
 from django import forms
@@ -29,7 +33,9 @@ class UserForgotPasswordForm(PasswordResetForm):
         """Обновление стилей формы"""
         super().__init__(*args, **kwargs)
         for field in self.fields:
-            self.fields[field].widget.attrs.update({"class": "form-control", "autocomplete": "off"})
+            self.fields[field].widget.attrs.update(
+                {"class": "form-control", "autocomplete": "off"}
+            )
 
 
 class UserSetNewPasswordForm(SetPasswordForm):
@@ -39,7 +45,9 @@ class UserSetNewPasswordForm(SetPasswordForm):
         """Обновление стилей формы"""
         super().__init__(*args, **kwargs)
         for field in self.fields:
-            self.fields[field].widget.attrs.update({"class": "form-control", "autocomplete": "off"})
+            self.fields[field].widget.attrs.update(
+                {"class": "form-control", "autocomplete": "off"}
+            )
 
 
 class PasswordRecoveryForm(StyleFormMixin, forms.Form):
