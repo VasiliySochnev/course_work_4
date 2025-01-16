@@ -35,7 +35,7 @@
 
                 {% for object in object_list %}
                 <tr>
-                    {% if user.is_staff or object.owner == user %}
+                    {% if user.is_superuser or user.is_staff or object.owner == user %}
                     <td><img src="{{ object.avatar|media_filter }}" alt="Фото" class="rounded" width="40" height="40"></td>
                     <td>{{ object.fio }}</td>
                     <td>{{ object.mail }}</td>
@@ -43,7 +43,7 @@
                     <td>{{ object.owner }}</td>
                     {% endif %}
                     <td>
-                        {% if object.owner == user %}
+                        {% if user.is_superuser or object.owner == user %}
                         <a class="btn btn-primary btn-sm"
                            href="{% url 'mailing:receivemail_update' object.pk%}">Редактировать
                         </a>

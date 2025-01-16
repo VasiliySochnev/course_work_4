@@ -81,8 +81,8 @@ def get_attempt_from_cache():
     if cache_attempt is not None:
         return cache_attempt
     cache_mail = Mailing.objects.all()
-    cache.set(cache_attempt, key)
-    return cache_attempt
+    cache.set(cache_mail, key)
+    return cache_mail
 
 
 @login_required

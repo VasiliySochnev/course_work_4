@@ -24,7 +24,7 @@
                 </tr>
                 </thead>
                 {% for object in object_list %}
-                    {% if object.owner == user or user.is_staff %}
+                    {% if user.is_superuser or object.owner == user or user.is_staff %}
 
                     <tr>
                         <td>{{ object.mailing.message.subject }}</td>

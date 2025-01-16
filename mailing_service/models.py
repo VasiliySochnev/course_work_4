@@ -65,10 +65,10 @@ class Mailing(models.Model):
     ]
 
     first_sending = models.DateTimeField(
-        verbose_name="Дата первой отправки", null=True, blank=True
+        verbose_name="Дата первой отправки", null=True, blank=True, help_text='гггг-мм-дд чч:мм:сс'
     )
     end_sending = models.DateTimeField(
-        verbose_name="Дата окончания отправки", null=True, blank=True
+        verbose_name="Дата окончания отправки", null=True, blank=True, help_text='гггг-мм-дд чч:мм:сс'
     )
 
     status = models.CharField(

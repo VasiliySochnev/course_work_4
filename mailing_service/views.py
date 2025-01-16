@@ -55,8 +55,7 @@ class MailingListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self, *args, **kwargs):
         if (
-            self.request.user.is_superuser
-            or self.request.user.groups.filter(name="Менеджеры").exists()
+            self.request.user.is_superuser or self.request.user.groups.filter(name="Менеджеры").exists()
         ):
             return super().get_queryset()
         elif self.request.user.groups.filter(name="Пользователи").exists():
@@ -84,15 +83,9 @@ class MailingDetailView(LoginRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
-        if (
-            self.request.user.groups.filter(name="Менеджеры")
-            or self.request.user.is_superuser
-        ):
+        if self.request.user.groups.filter(name="Менеджеры") or self.request.user.is_superuser:
             return self.object
-        if (
-            self.object.owner != self.request.user
-            and not self.request.user.is_superuser
-        ):
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
         return self.object
 
@@ -130,10 +123,7 @@ class ReceiveMailDetailView(LoginRequiredMixin, DetailView):
         self.object = super().get_object(queryset)
         if self.request.user.is_superuser:
             return self.object
-        if (
-            self.object.owner != self.request.user
-            and not self.request.user.is_superuser
-        ):
+        if (self.object.owner != self.request.user and not self.request.user.is_superuser):
             raise PermissionDenied
         return self.object
 
